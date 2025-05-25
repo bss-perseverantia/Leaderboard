@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <title>Admin Panel – Perseverantia 2025</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="https://bss-perseverantia.github.io/assets/persevlogo.png" />
+  </head>
+  <body class="bg-gray-900 text-white">
+    <header class="bg-gray-800 shadow-md">
+      <div class="container mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <img
+            src="https://bss-perseverantia.github.io/assets/persevlogo.png"
+            alt="Logo"
+            class="h-20 w-20 rounded-full"
+          />
+          <h1 class="text-2xl sm:text-3xl font-bold text-blue-200"><span class="hidden md:block">Perseverantia 2025 - </span>Admin Panel</h1>
+        </div>
+      </div>
+    </header>
+
+    <main id="admin-content" class="container mx-auto mt-10 px-4 hidden">
+      <h2 class="text-3xl font-bold text-center text-blue-300 mb-8">
+        Welcome, Admin
+      </h2>
+
+      <!-- ADD POINTS -->
+      <section class="mb-12">
+        <div
+          class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xl mx-auto text-center"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-green-300">
+            ➕ Add Points
+          </h3>
+          <form id="add-form" class="space-y-4">
+            <select
+              id="add-school"
+              class="w-full bg-gray-700 text-white rounded px-3 py-2"
+            ></select>
+            <select
+              id="add-event"
+              class="w-full bg-gray-700 text-white rounded px-3 py-2"
+            ></select>
+            <input
+              type="number"
+              id="add-points"
+              min="1"
+              class="w-full bg-gray-700 text-white rounded px-3 py-2"
+              placeholder="Points to add"
+            />
+            <button
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded"
+            >
+              Add Points
+            </button>
+            <p id="add-msg" class="mt-4 text-sm text-center"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- REMOVE POINTS -->
+      <section>
+        <div
+          class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xl mx-auto mb-8 text-center"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-red-300">
+            ➖ Remove Points
+          </h3>
+          <form id="remove-form" class="space-y-4">
+            <select
+              id="remove-school"
+              class="w-full bg-gray-700 text-white rounded px-3 py-2"
+            >
+              <option value="">Select School</option>
+            </select>
+            <select
+              id="remove-event"
+              class="w-full bg-gray-700 text-white rounded px-3 py-2"
+            >
+              <option value="">Select a school first</option>
+            </select>
+            <input
+              type="number"
+              id="remove-points"
+              min="1"
+              class="w-full bg-gray-700 text-white rounded px-3 py-2"
+              placeholder="Points to remove"
+            />
+            <button
+              class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+            >
+              Remove Points
+            </button>
+            <p id="remove-msg" class="mt-4 text-sm text-center"></p>
+          </form>
+        </div>
+      </section>
+      <!-- RESET POINTS -->
+      <section>
+        <div
+          class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xl mx-auto mb-16 text-center"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-yellow-300">
+            🔄 Reset All Points
+          </h3>
+          <button
+            id="reset-btn"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Reset Points
+          </button>
+          <p id="reset-msg" class="mt-4 text-sm"></p>
+        </div>
+      </section>
+
+      <!-- END EVENT -->
+      <section>
+        <div
+          class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xl mx-auto mb-16 text-center"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-yellow-300">
+            End Event
+          </h3>
+          <button
+            id="end-btn"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            End Event
+          </button>
+          <p id="end-msg" class="mt-4 text-sm"></p>
+        </div>
+      </section>
+      <!-- Start EVENT -->
+      <section>
+        <div
+          class="bg-gray-800 p-6 rounded-lg shadow-lg max-w-xl mx-auto mb-16 text-center"
+        >
+          <h3 class="text-xl font-semibold mb-4 text-yellow-300">
+            Start Event
+          </h3>
+          <button
+            id="start-btn"
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded"
+          >
+            Start Event
+          </button>
+          <p id="start-msg" class="mt-4 text-sm"></p>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      let adminUsername = null;
+      let adminPassword = null;
+      let allEvents = [];
+
+      async function promptLogin() {
+        const uname = prompt("Enter Admin Username:");
+        const pass = prompt("Enter Admin Password:");
+        if (!uname || !pass) return promptLogin();
+
+        const res = await fetch(
+          `/api/add?uname=${uname}&pass=${pass}&school=test&event=test&points=0`,
+        );
+        const json = await res.json();
+        if (json.success) {
+          adminUsername = uname;
+          adminPassword = pass;
+          document.getElementById("admin-content").classList.remove("hidden");
+          loadSchoolsAndEvents();
+        } else {
+          alert("Invalid credentials.");
+          promptLogin();
+        }
+      }
+
+      async function loadSchoolsAndEvents() {
+        const res = await fetch("/api/info");
+        const data = await res.json();
+        const schools = data.schools;
+        const events = data.events;
+
+        const schoolOptions = schools
+          .map((s) => `<option value="${s}">${s}</option>`)
+          .join("");
+        const eventOptions = events
+          .map((e) => `<option value="${e}">${e}</option>`)
+          .join("");
+
+        document.getElementById("add-school").innerHTML =
+          `<option value="">Select School</option>` + schoolOptions;
+        document.getElementById("add-event").innerHTML =
+          `<option value="">Select Event</option>` + eventOptions;
+        document.getElementById("remove-school").innerHTML =
+          `<option value="">Select School</option>` + schoolOptions;
+      }
+
+      document
+        .getElementById("add-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const school = document.getElementById("add-school").value;
+          const event = document.getElementById("add-event").value;
+          const points = document.getElementById("add-points").value;
+          const msg = document.getElementById("add-msg");
+
+          if (!school || !event || !points) {
+            msg.textContent = "All fields are required.";
+            msg.className = "text-red-400";
+            return;
+          }
+
+          if (
+            !confirm(
+              `Are you sure you want to add ${points} point(s) to "${school}" for "${event}"?`,
+            )
+          )
+            return;
+
+          const res = await fetch(
+            `/api/add?uname=${adminUsername}&pass=${adminPassword}&school=${encodeURIComponent(school)}&event=${encodeURIComponent(event)}&points=${points}`,
+          );
+          const result = await res.json();
+
+          if (result.success) {
+            msg.textContent = "✅ Points added successfully.";
+            msg.className = "text-green-400";
+            document.getElementById("add-form").reset();
+          } else {
+            msg.textContent = "❌ Failed to add points.";
+            msg.className = "text-red-400";
+          }
+        });
+
+      document
+        .getElementById("remove-school")
+        .addEventListener("change", async (e) => {
+          const school = e.target.value;
+          const eventSelect = document.getElementById("remove-event");
+          eventSelect.innerHTML = `<option>Loading...</option>`;
+
+          if (!school) return;
+
+          const res = await fetch(
+            "https://043b211b-f41a-47d8-a4a5-dacb6654ed94-00-2h678p0p2ks8v.janeway.replit.dev/api/full",
+          );
+          const fullData = await res.json();
+          allEvents = fullData.schools.filter((e) => e.name === school);
+
+          eventSelect.innerHTML = `<option value="">Select Event</option>`;
+          for (let i = 0; i < allEvents[0].eventpoints.length; i++) {
+            console.log(allEvents[0].eventpoints[i]);
+            if (allEvents[0].eventpoints[i] > 0) {
+              eventSelect.innerHTML += `<option value="${allEvents[0].events[i]}">${allEvents[0].events[i]} (${allEvents[0].eventpoints[i]} pts)</option>`;
+            } else continue;
+          }
+        });
+
+      document
+        .getElementById("remove-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const school = document.getElementById("remove-school").value;
+          const event = document.getElementById("remove-event").value;
+          const points = parseInt(
+            document.getElementById("remove-points").value,
+          );
+          const msg = document.getElementById("remove-msg");
+
+          if (!school || !event || !points) {
+            msg.textContent = "All fields are required.";
+            msg.className = "text-red-400";
+            return;
+          }
+
+          if (
+            !confirm(
+              `Are you sure you want to remove ${points} point(s) from "${school}" for "${event}"?`,
+            )
+          )
+            return;
+
+          const res = await fetch(
+            `/api/rem?uname=${adminUsername}&pass=${adminPassword}&school=${encodeURIComponent(school)}&event=${encodeURIComponent(event)}&points=${points}`,
+          );
+          const result = await res.json();
+
+          if (result.success) {
+            msg.textContent = "✅ Points removed successfully.";
+            msg.className = "text-green-400";
+            document.getElementById("remove-form").reset();
+            document
+              .getElementById("remove-school")
+              .dispatchEvent(new Event("change"));
+          } else {
+            msg.textContent = "❌ Failed to remove points.";
+            msg.className = "text-red-400";
+          }
+        });
+
+      window.onload = promptLogin;
+      document
+      .getElementById("reset-btn")
+      .addEventListener("click", async () => {
+        if (
+          !confirm(
+            "Are you sure you want to reset all points? This action cannot be undone.",
+          )
+        )
+          return;
+
+        const msg = document.getElementById("reset-msg");
+
+        const res = await fetch(
+          `/api/reset?uname=${adminUsername}&pass=${adminPassword}`,
+        );
+        const result = await res.json();
+
+        if (result.success) {
+          msg.textContent = "✅ All points have been reset.";
+          msg.className = "text-green-400";
+          loadSchoolsAndEvents(); 
+        } else {
+          msg.textContent = "❌ Failed to reset points.";
+          msg.className = "text-red-400";
+        }
+      });
+      document
+      .getElementById("end-btn")
+      .addEventListener("click", async () => {
+        if (
+          !confirm(
+            "Are you sure you want to end the Event? This action can be undone later.",
+          )
+        )
+          return;
+
+        const msg = document.getElementById("end-msg");
+
+        const res = await fetch(
+          `/api/endEvent?uname=${adminUsername}&pass=${adminPassword}`,
+        );
+        const result = await res.json();
+        console.log(result)
+
+        if (result.success) {
+          msg.textContent = "✅ Event has ended.";
+          msg.className = "text-green-400";
+          loadSchoolsAndEvents(); 
+        } else {
+          msg.textContent = "❌ Failed to end events.";
+          msg.className = "text-red-400";
+        }
+      });
+      document
+      .getElementById("start-btn")
+      .addEventListener("click", async () => {
+        if (
+          !confirm(
+            "Are you sure you want to start the event again? This action can be undone.",
+          )
+        )
+          return;
+
+        const msg = document.getElementById("start-msg");
+
+        const res = await fetch(
+          `/api/eventStart?uname=${adminUsername}&pass=${adminPassword}`,
+        );
+        const result = await res.json();
+
+        if (result.success) {
+          msg.textContent = "✅ All events have been resumed.";
+          msg.className = "text-green-400";
+          loadSchoolsAndEvents(); 
+        } else {
+          msg.textContent = "❌ Failed to resume events.";
+          msg.className = "text-red-400";
+        }
+      });
+    </script>
+  </body>
+</html>
