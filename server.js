@@ -13,11 +13,11 @@ const db = new DB(loc, config.events, config.schools);
 require("./api.js")(app, db);
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/pages/leaderboard2.html");
+  res.sendFile(__dirname + "/pages/leaderboard.html");
 });
 
 app.get("/admin", (req, res) => {
-  res.sendFile(__dirname + "/pages/admin2.html");
+  res.sendFile(__dirname + "/pages/admin.html");
 });
 app.use((req, res, next) => {
   res.status(404).sendFile(__dirname+"/pages/404.html");
