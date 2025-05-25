@@ -1,5 +1,5 @@
 {
-  "name": "Perseverantia Leaderboard",
+  "name": "Leaderboard",
   "version": "0.0.1",
   "description": "Official School Leaderboard for Perseverantia 2025.",
   "main": "server.js",
