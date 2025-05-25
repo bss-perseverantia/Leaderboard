@@ -1,5 +1,5 @@
-# PERSEVERANTIA 2025 WEBSITE
-The code for the official website of Perseverantia, 2025, the annual inter-school festival of Bombay Scottish School, Mahim.
+# PERSEVERANTIA 2025 LEADERBOARD
+The code for the official school leaderboard of Perseverantia, 2025, the annual inter-school festival of Bombay Scottish School, Mahim.
 
 ## Note for future Heads of Technical Operations.
 Things to be edited while suiting the website for next year:
