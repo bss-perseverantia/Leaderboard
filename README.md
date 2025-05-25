@@ -16,3 +16,5 @@ port: Do NOT edit!
 events: List of all Events that will be held in Perseverantia, update accordingly.
 
 schools: List of all schools taking part in the Perseverantia, update accordingly.
+
+### Read [How To Deploy](https://github.com/bss-perseverantia/Leaderboard/blob/main/how%20to%20deploy.md)
