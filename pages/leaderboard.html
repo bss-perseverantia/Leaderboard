@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <title>Perseverantia 2025 Leaderboard</title>
+    <style>
+        @font-face {
+          font-family: Mestizo;
+          src: url(https://bss-perseverantia.github.io/assets/MestizoFont.ttf);
+        }
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <script src="confetti.js"></script>
+    <link rel="icon" type="image/png" href="https://bss-perseverantia.github.io/assets/persevlogo.png" />
+    <script>
+      var stoptime = false;
+      
+      const start = () => {
+          setTimeout(function() {
+              confetti.start()
+          }, 1000); 
+      };
+      
+
+      const stop = (t) => {
+          setTimeout(function() {
+            
+              confetti.stop()
+              stoptime=true;
+          }, t); 
+      };
+      
+      
+    </script>
+    <style>
+      .fade-move {
+        transition:
+          transform 0.5s ease,
+          opacity 0.5s ease;
+      }
+      .progress-bar {
+        transition: width 1s ease-in-out;
+      }
+      #leaderboard-container {
+        transition: margin-right 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-900 text-white">
+    <header class="bg-gray-800 shadow-md">
+      <div class="container pt-2 mx-auto flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <img
+            src="https://bss-perseverantia.github.io/assets/persevlogo.png"
+            alt="Logo"
+            class="h-16 w-16 rounded-full"
+          />
+          <h1 class="text-3xl sm:text-3xl text-blue-200" style = "font-family:Mestizo;">
+            Perseverantia 2025
+          </h1>
+        </div>
+      </div>
+    </header>
+
+    <div class="container mx-auto mt-12 px-4" id="leaderboard-container">
+      <h1 class="text-4xl font-bold text-center text-blue-200 mb-8">
+        Leaderboard
+        <div id="mobilelay" class="hidden md:block"></div>
+      </h1>
+      <div class="overflow-x-auto" >
+        <table
+          class="min-w-full bg-gray-800 rounded-lg shadow-lg overflow-hidden my-8"
+          id="leaderboard"
+        >
+          <thead>
+            <tr
+              class="bg-blue-700 text-blue-200 uppercase text-md tracking-wider"
+            >
+              <th class="py-4 px-2 text-center w-16">Position</th>
+              <th class="py-4 pl-8 px-2 text-left w-48">School</th>
+              <th class="py-4 px-2 text-center w-24">Points</th>
+              <th class="py-4 px-2 text-center hidden sm:table-cell">
+                Progress
+              </th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body" class="text-blue-100"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div
+      id="school-panel"
+      class="fixed top-0 right-0 h-full w-full md:w-1/4 bg-gray-900 shadow-lg transform overflow-y-auto translate-x-full transition-transform duration-300 z-50"
+    >
+      <div
+        class="flex justify-between items-center p-4 bg-gray-800 border-b border-gray-700"
+      >
+        <h2 id="school-title" class="text-2xl font-bold text-blue-300"></h2>
+        <button
+          onclick="closePanel()"
+          class="text-white text-2xl focus:outline-none hover:text-red-500"
+          aria-label="Close"
+        >
+          &times;
+        </button>
+      </div>
+      <div class="p-6">
+        <table class="w-full text-left table-auto">
+          <tbody id="school-detail-body" class="text-blue-100">
+            <tr>
+              <td class="py-2 font-semibold text-blue-200">Points:</td>
+              <td id="school-points" class="py-2"></td>
+            </tr>
+            <tr>
+              <td class="py-2 font-semibold text-blue-200">Rank:</td>
+              <td id="school-rank" class="py-2"></td>
+            </tr>
+          </tbody>
+        </table>
+        
+
+        <table class="w-full text-left rounded-lg mt-8 border-collapse">
+          <thead
+            class="bg-blue-700 text-blue-200 uppercase text-md tracking-wider"
+          >
+            <tr>
+              <th class="px-4 py-3">Event</th>
+              <th class="px-4 py-3">Points</th>
+            </tr>
+          </thead>
+          <tbody id="scc" class="text-blue-100"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      let previousData = [];
+
+      async function openPanel(school) {
+        document.getElementById("school-title").innerText = school.name;
+        document.getElementById("school-points").innerText = school.points;
+        document.getElementById("school-rank").innerText = `#${school.rank}`;
+        document
+          .getElementById("school-panel")
+          .classList.remove("translate-x-full");
+
+        document.getElementById("leaderboard-container").classList.add("mr-96");
+        document.getElementById("leaderboard-container").classList.add("w-2/3");
+        const response = await fetch("/api/full");
+        const data = await response.json();
+        //sidepanel
+        const scd = data.schools.filter((e) => e.name === school.name)[0];
+        document.getElementById("scc").innerHTML = "";
+
+        scd.events.forEach((event, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td class="px-2 py-2 whitespace-nowrap text-blue-100 border-b border-gray-700">
+              ${event}
+            </td>
+            <td class="px-2 py-2 whitespace-nowrap text-blue-100 border-b border-gray-700">
+              ${scd.eventpoints[index]}
+            </td>
+          `;
+          document.getElementById("scc").appendChild(row);
+        });
+      }
+
+      function closePanel() {
+        document
+          .getElementById("school-panel")
+          .classList.add("translate-x-full");
+
+        document
+          .getElementById("leaderboard-container")
+          .classList.remove("mr-96");
+        document
+          .getElementById("leaderboard-container")
+          .classList.remove("w-2/3");
+      }
+
+      function renderLeaderboard(data) {
+        const leaderboardBody = document.getElementById("leaderboard-body");
+        const maxPoints = Math.max(...data.map((item) => item.points)) || 1;
+
+        data.sort((a, b) => b.points - a.points);
+
+        if (data.length > 0) {
+            data[0].rank = 1; 
+            for (let i = 1; i < data.length; i++) {
+                if (data[i].points === data[i - 1].points) {
+                    data[i].rank = data[i - 1].rank; 
+                } else {
+                    data[i].rank = data[i - 1].rank + 1;
+                }
+            }
+        }
+
+        leaderboardBody.innerHTML = "";
+
+        data.forEach((item) => {
+          const percentage = (item.points / maxPoints) * 100;
+
+          let barColor = "bg-blue-500";
+          if (item.rank === 1) barColor = "bg-yellow-400";
+          else if (item.rank === 2) barColor = "bg-gray-300";
+          else if (item.rank === 3) barColor = "bg-yellow-700";
+
+          const previousItem = previousData.find((d) => d.name === item.name);
+          const previousPosition = previousItem ? previousItem.rank : null;
+          const positionChange = previousPosition
+            ? previousPosition - item.rank
+            : 0;
+
+          let highlightClass = "";
+          let positionArrow = "";
+
+          if (positionChange > 0) {
+            highlightClass = "bg-green-800";
+            positionArrow = "▲";
+          } else if (positionChange < 0) {
+            highlightClass = "bg-red-800";
+            positionArrow = "▼";
+          }
+
+          const row = document.createElement("tr");
+          row.dataset.school = item.name;
+          row.className = `transition-colors duration-500 ${highlightClass} hover:bg-gray-600`;
+
+          row.innerHTML = `
+            <td class="py-4 px-6 font-semibold text-center text-md">
+              #${item.rank} ${positionArrow ? `<span class="inline">${positionArrow}</span>` : ""}
+            </td>
+            <td class="py-4 px-6 text-left cursor-pointer text-blue-100 hover:underline">
+              ${item.rank === 1 ? "🥇" : item.rank === 2 ? "🥈" : item.rank === 3 ? "🥉" : ""} ${item.name}
+            </td>
+            <td class="py-4 px-6 text-center">${item.points}</td>
+            <td class="py-4 px-6 hidden sm:table-cell">
+              <div class="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+                <div class="${barColor} h-4 rounded-full progress-bar" data-progress="${item.name}"></div>
+              </div>
+            </td>
+          `;
+
+          row.addEventListener("click", () => openPanel(item));
+          leaderboardBody.appendChild(row);
+
+          const progressBar = row.querySelector(
+            `[data-progress="${item.name}"]`,
+          );
+          requestAnimationFrame(() => {
+            progressBar.style.width = `${percentage}%`;
+          });
+
+          if (highlightClass) {
+            setTimeout(() => {
+              row.classList.remove(highlightClass);
+              const positionCell = row.querySelector("td");
+              if (positionCell) positionCell.innerHTML = `#${item.rank}`;
+            }, 6000);
+          }
+        });
+
+        previousData = JSON.parse(JSON.stringify(data)); 
+      }
+
+      async function fetchAndRender() {
+        try {
+          const response = await fetch("/api/info");
+          const data = await response.json();
+          if(data.eventEnd) onEventsEnd();
+          console.log(data.eventEnd)
+          console.log(ee)
+          if(!data.eventEnd && ee) window.location.reload()
+
+
+          const schools = data.schools;
+          const points = data.points;
+
+          const leaderboardData = schools.map((school, index) => ({
+            name: school,
+            points: points[index],
+          }));
+
+          renderLeaderboard(leaderboardData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      fetchAndRender();
+      setInterval(fetchAndRender, 5000);
+    </script>
+
+    <script>
+      const trophyImages = {
+        1: "https://i.pinimg.com/736x/df/43/6e/df436ea7c7fbb220803957062cb163de.jpg",
+        2: "https://png.pngtree.com/png-vector/20210204/ourmid/pngtree-2nd-winner-silver-trophy-in-3d-png-image_2880321.jpg",
+        3: "https://png.pngtree.com/png-vector/20210204/ourmid/pngtree-3rd-winner-bronze-trophy-png-image_2880322.jpg",
+      };
+      var ee = false;
+
+      function onEventsEnd() {
+        
+        ee=true;
+        fetch("/api/info")
+          .then((res) => res.json())
+          .then((data) => {
+            const schools = data.schools;
+            const points = data.points;
+            if(data.eventEnd && !ee) window.location.reload()
+
+            let leaderboard = schools.map((school, index) => ({
+              name: school,
+              points: points[index],
+            }));
+
+            leaderboard.sort((a, b) => b.points - a.points);
+
+            leaderboard[0].rank = 1;
+            for (let i = 1; i < leaderboard.length; i++) {
+              leaderboard[i].rank =
+                leaderboard[i].points === leaderboard[i - 1].points
+                  ? leaderboard[i - 1].rank
+                  : leaderboard[i - 1].rank + 1;
+            }
+
+            const grouped = { 1: [], 2: [], 3: [], others: [] };
+            leaderboard.forEach((entry) => {
+              if ([1, 2, 3].includes(entry.rank)) grouped[entry.rank].push(entry);
+              else grouped.others.push(entry);
+            });
+
+            const resultContainer = document.createElement("div");
+            resultContainer.id = "final-results";
+            resultContainer.className =
+              "mt-12 p-6 bg-gray-900 text-blue-100 rounded-lg";
+
+            const podium = document.createElement("div");
+            podium.className = "hidden sm:flex justify-center items-end gap-8 mb-12 text-center flex-wrap";
+
+            if (grouped[2].length > 0)
+              podium.appendChild(createRankBox(grouped[2], 2, "h-48 w-64"));
+            if (grouped[1].length > 0)
+              podium.appendChild(createRankBox(grouped[1], 1, "h-56 w-72"));
+            if (grouped[3].length > 0)
+              podium.appendChild(createRankBox(grouped[3], 3, "h-40 w-56"));
+
+            resultContainer.appendChild(podium);
+            const existing = document.getElementById("final-results");
+            if (existing) existing.remove();
+            
+            document.getElementById("leaderboard-container").insertBefore(resultContainer,document.getElementById("leaderboard-container").firstChild)
+            if(!stoptime){
+              start();
+              stop(15000);
+            }
+          })
+          .catch((err) => console.error("Error loading final results:", err));
+      }
+      
+
+      function createRankBox(schools, rank, sizeClasses) {
+        const box = document.createElement("div");
+        box.className = `relative bg-gray-800 rounded-xl p-4 pt-20 flex flex-col justify-end items-center shadow-xl ${sizeClasses} cursor-pointer hover:bg-gray-700 transition-all duration-300`;
+
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className =
+          "absolute -top-12 left-1/2 transform -translate-x-1/2";
+        const img = document.createElement("img");
+        img.src = trophyImages[rank];
+        img.alt = `Rank ${rank} Trophy`;
+        img.className =
+          "w-24 h-24 rounded-full border-4 border-yellow-300 shadow-lg object-cover";
+        imageWrapper.appendChild(img);
+        box.appendChild(imageWrapper);
+
+        const title = document.createElement("div");
+        title.className = "font-bold text-xl text-yellow-300 mb-2";
+        title.innerText = `Rank ${rank}`;
+        box.appendChild(title);
+
+        const names = document.createElement("div");
+        names.className = "text-blue-100 text-base leading-tight";
+        names.innerHTML = schools.map((s) => s.name).join(" &<br>");
+        box.appendChild(names);
+
+        const points = document.createElement("div");
+        points.className = "mt-2 text-blue-300 text-sm";
+        points.innerText = `${schools[0].points} pts`;
+        box.appendChild(points);
+
+        
+
+        return box;
+      }
+
+    </script>
+  </body>
+</html>
