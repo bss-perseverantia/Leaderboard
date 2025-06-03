@@ -3,13 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-    <meta name="description" content=" Perseverantia Leaderboard">
-    <meta name="keywords" content="Perseverantia,Leaderboard,Persev 2025 leaderboard, Perseverantia 2025, Bombay Scottish School Mahim, Bombay Scottish School, Events at Scottish Mahim, Scottish Mahim, Inter-school Fest, Inter-school Festivals">
-    <meta property="og:title" content="Perseverantia Leaderboard" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://perseverantia.onrender.com/" />
-    <meta property="og:description" content="School Leaderboard for Perseverantia, The Annual Inter-school Festival of Bombay Scottish School, Mahim.">
-    <meta property="og:image" content="https://bss-perseverantia.github.io/persevlogo.png" />
     <title>Perseverantia 2025 Leaderboard</title>
     <style>
         @font-face {
@@ -57,8 +50,7 @@
       }
     </style>
   </head>
-  <body class="bg-gray-900 text-white">
-    <header class="bg-gray-800 shadow-md">
+<body style="background: #11598d; background: linear-gradient(50deg, rgba(17, 89, 141, 1) 0%, rgba(8, 16, 50, 1) 100%);" class="text-white">    <header style="background-color: #081032;" class="shadow-md">
       <div class="container pt-2 mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-4">
           <img
@@ -346,8 +338,9 @@
             const resultContainer = document.createElement("div");
             resultContainer.id = "final-results";
             resultContainer.className =
-              "mt-12 p-6 bg-gray-900 text-blue-100 rounded-lg";
-
+  "mt-12 p-6 bg-transparent text-blue-100 border-8 mb-16 pt-20 hidden md:block";
+          resultContainer.style.borderColor = "#BE8E30";
+          resultContainer.style.borderRadius = "30px";
             const podium = document.createElement("div");
             podium.className = "hidden sm:flex justify-center items-end gap-8 mb-12 text-center flex-wrap";
 
@@ -374,7 +367,7 @@
 
       function createRankBox(schools, rank, sizeClasses) {
         const box = document.createElement("div");
-        box.className = `relative bg-gray-800 rounded-xl p-4 pt-20 flex flex-col justify-end items-center shadow-xl ${sizeClasses} cursor-pointer hover:bg-gray-700 transition-all duration-300`;
+        box.className = `relative bg-gray-900 rounded-xl p-4 pt-20 flex flex-col justify-end items-center shadow-xl ${sizeClasses} cursor-pointer hover:bg-gray-700 transition-all duration-300`;
 
         const imageWrapper = document.createElement("div");
         imageWrapper.className =
