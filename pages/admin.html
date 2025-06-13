@@ -247,7 +247,7 @@
           if (!school) return;
 
           const res = await fetch(
-            "https://043b211b-f41a-47d8-a4a5-dacb6654ed94-00-2h678p0p2ks8v.janeway.replit.dev/api/full",
+            "/api/full",
           );
           const fullData = await res.json();
           allEvents = fullData.schools.filter((e) => e.name === school);
