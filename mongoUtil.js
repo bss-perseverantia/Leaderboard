@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 
-const uri = "mongodb+srv://admin:youshallnotpass@persev.kljqat8.mongodb.net/?retryWrites=true&w=majority&appName=persev";
+const uri = "mongodb+srv://admin:"+process.env.mongo+"@persev.kljqat8.mongodb.net/?retryWrites=true&w=majority&appName=persev";
 const dbName = "persev";
 const collectionName = "backup";
 
