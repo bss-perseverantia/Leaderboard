@@ -1,6 +1,8 @@
 const loc = __dirname + "/db.json";
 const config = require("./config.js");
 
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = require("express")();
 app.use(require("express").static("static"));
